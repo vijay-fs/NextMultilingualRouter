@@ -1,17 +1,18 @@
 import type {InitOptions} from 'i18next';
 
-export const FALLBACK_LOCALE = 'en';
-export const supportedLocales = ['en', 'zh-CN', 'sv'] as const;
-export type Locales = (typeof supportedLocales)[number];
+export const fallbackLng = 'en';
+export const locales = [fallbackLng, 'zh-CN', 'sv'] as const;
+export type LocaleTypes = (typeof locales)[number];
+export const defaultNS = 'common';
 
-export const LANGUAGE_COOKIE = 'preferred_language';
-
-export function getOptions(lang = FALLBACK_LOCALE, ns = 'common'): InitOptions {
+export function getOptions(lang = fallbackLng, ns = defaultNS): InitOptions {
   return {
     // debug: true, // Set to true to see console logs
-    supportedLngs: supportedLocales,
-    fallbackLng: FALLBACK_LOCALE,
+    supportedLngs: locales,
+    fallbackLng,
     lng: lang,
+    fallbackNS: defaultNS,
+    defaultNS,
     ns,
   };
 }

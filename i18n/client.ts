@@ -5,13 +5,7 @@ import i18next, {i18n} from 'i18next';
 import {initReactI18next, useTranslation as useTransAlias} from 'react-i18next';
 import resourcesToBackend from 'i18next-resources-to-backend';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import {
-  Locales,
-  LANGUAGE_COOKIE,
-  getOptions,
-  supportedLocales,
-} from './settings';
-import {useLocale} from '../hooks/locale-provider';
+import {type LocaleTypes, getOptions, locales} from './settings';
 
 const runsOnServerSide = typeof window === 'undefined';
 
@@ -21,23 +15,20 @@ i18next
   .use(LanguageDetector)
   .use(
     resourcesToBackend(
-      (lang: string, ns: string) => import(`./locales/${lang}/${ns}.json`),
+      (language: LocaleTypes, namespace: string) =>
+        import(`./locales/${language}/${namespace}.json`),
     ),
   )
   .init({
     ...getOptions(),
     lng: undefined, // detect the language on the client
     detection: {
-      order: ['cookie'],
-      lookupCookie: LANGUAGE_COOKIE,
-      caches: ['cookie'],
+      order: ['path'],
     },
-    preload: runsOnServerSide ? supportedLocales : [],
+    preload: runsOnServerSide ? locales : [],
   });
 
-export function useTranslation(ns: string) {
-  const lng = useLocale();
-
+export function useTranslation(lng: LocaleTypes, ns: string) {
   const translator = useTransAlias(ns);
   const {i18n} = translator;
 
@@ -52,7 +43,7 @@ export function useTranslation(ns: string) {
   return translator;
 }
 
-function useCustomTranslationImplem(i18n: i18n, lng: Locales) {
+function useCustomTranslationImplem(i18n: i18n, lng: LocaleTypes) {
   // This effect changes the language of the application when the lng prop changes.
   useEffect(() => {
     if (!lng || i18n.resolvedLanguage === lng) return;

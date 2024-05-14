@@ -1,9 +1,13 @@
 'use client';
 import React from 'react';
 import {useTranslation} from '../i18n/client';
+import type {LocaleTypes} from '../i18n/settings';
+import {useParams} from 'next/navigation';
 
 const BuiltInFormatsDemo = () => {
-  const {t} = useTranslation('built-in-formats');
+  let locale = useParams()?.locale as LocaleTypes;
+
+  const {t} = useTranslation(locale, 'built-in-demo');
 
   return (
     <div>
